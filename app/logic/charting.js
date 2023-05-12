@@ -38,7 +38,11 @@ function load_gantt(load_data){
 
 	gantt.init("gantt_here");
 	console.log(load_data, "load_data");
-	gantt.parse({"data":load_data, "links":[]});
+  
+  gantt.parse({"data":load_data, "links":[]});
+  
+	
+  window.parsed = true;
 }
 
 
@@ -95,8 +99,10 @@ function fetch_data(){
 
     var sd = $("#sd").val(),
         ed = $("#ed").val(),
-        range_duration = days_btw(sd, ed),
         date = new Date();
+
+    console.log(sd == '' || ed == '' || sd == null || ed == null);
+
 
     if (sd == '' || ed == '' || sd == null || ed == null){
         
@@ -104,12 +110,18 @@ function fetch_data(){
         ed = new Date(date.getFullYear(), date.getMonth() + 1, 2),
         range_duration = days_btw(sd, ed);
         
-        ssd = sd.toISOString().slice(0,10).replace(/-/g,"-");
-        console.log(sd, "")
-        sed = ed.toISOString().slice(0,10).replace(/-/g,"-");
-        console.log(ed)
+        
+    } else {
+
+        sd = new Date(sd);
+        ed = new Date(ed);
+        range_duration = days_btw(sd, ed);
         
     }
+
+    ssd = sd.toISOString().slice(0,10).replace(/-/g,"-");
+    sed = ed.toISOString().slice(0,10).replace(/-/g,"-");
+        
 
 
     ZOHO.CREATOR.init()
@@ -128,7 +140,7 @@ function fetch_data(){
             console.log(Room_Roster);
             
             ZOHO.CREATOR.API.getAllRecords(Room_Roster).then(function(response){
-   
+                console.log(response);
 
                 let __data = make_structure(data = response.data, sd = ssd, range_duration = range_duration)
                 load_gantt(__data);
@@ -154,11 +166,14 @@ function fetch_data(){
 
 $(()=>{
 
+  window.parsed = true;
+
     fetch_data();
     
     $("#updateChart").on("click", ()=>{
 
-        fetch_data();
+      gantt.clearAll();   
+      fetch_data();
     });  
 
 })
