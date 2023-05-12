@@ -1,0 +1,19 @@
+[info] [2023-05-12T07:11:32.952Z] : 
+[info] [2023-05-12T07:11:32.955Z] : Click this URL to login to your Zoho Account
+[info] [2023-05-12T07:11:32.956Z] : https://accounts.zoho.com/oauth/v2/auth?client_id=1000.gnjph6g96nf23jd4u14tba2egykhik&scope=ZAPPS.apps.ALL%20AaaServer.profile.READ%20ZMProcessors.connectors.CREATE&response_type=code&access_type=offline&prompt=consent&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] [2023-05-12T07:11:32.956Z] : Note: To login to CN DC, update the above URL from accounts.zoho.com to accounts.zoho.com.cn
+[info] [2023-05-12T07:11:32.957Z] : 
+[debug] [2023-05-12T07:12:22.034Z] : DCType Of the user is in
+[debug] [2023-05-12T07:12:22.037Z] : >>>> HTTP REQUEST : POST https://accounts.zoho.in/oauth/v2/token 
+<request query omitted>
+
+[debug] [2023-05-12T07:12:22.319Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 12 May 2023 07:12:21 GMT","content-type":"application/json;charset=UTF-8","content-length":"391","connection":"close","set-cookie":["6e73717622=94da0c17b67b4320ada519c299270f95; Path=/","iamcsr=83413ae7-64ef-4001-a620-e84dfae336ce;path=/;Secure;priority=high","_zcsr_tmp=83413ae7-64ef-4001-a620-e84dfae336ce;path=/;SameSite=Strict;Secure;priority=high"],"cache-control":"no-store","x-content-type-options":"nosniff","pragma":"no-cache","x-xss-protection":"1","x-frame-options":"SAMEORIGIN","content-language":"en-US","strict-transport-security":"max-age=63072000"}
+
+[debug] [2023-05-12T07:12:22.343Z] : >>>> HTTP REQUEST : GET https://accounts.zoho.in/oauth/user/info 
+
+[debug] [2023-05-12T07:12:22.477Z] : <<<< HTTP RESPONSE : 200
+Response Headers{"server":"ZGS","date":"Fri, 12 May 2023 07:12:21 GMT","content-type":"application/json;charset=UTF-8","content-length":"129","connection":"close","set-cookie":["6e73717622=94da0c17b67b4320ada519c299270f95; Path=/","iamcsr=58c2fbb7-cfe0-420b-871b-505e03b0876a;path=/;Secure;priority=high","_zcsr_tmp=58c2fbb7-cfe0-420b-871b-505e03b0876a;path=/;SameSite=Strict;Secure;priority=high"],"x-content-type-options":"nosniff","x-xss-protection":"1","cache-control":"private,no-cache,no-store,max-age=0,must-revalidate","pragma":"no-cache","expires":"Thu, 01 Jan 1970 00:00:00 GMT","x-frame-options":"SAMEORIGIN","content-language":"en-US","strict-transport-security":"max-age=63072000"}
+
+[info] [2023-05-12T07:13:12.617Z] : i Command ZET push not applicable for the selected service as it is not mapped to ZET online model.
+[info] [2023-05-12T11:46:06.579Z] : i Command ZET push not applicable for the selected service as it is not mapped to ZET online model.
