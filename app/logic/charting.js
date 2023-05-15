@@ -18,6 +18,8 @@ function load_gantt(load_data){
 
 	
 	gantt.config.auto_types = true;
+  gantt.config.drag_resize = false;
+  gantt.config.drag_links = false;
 	gantt.config.auto_scheduling = true;
 	gantt.config.auto_scheduling_compatibility = true;
 	gantt.locale.labels.section_split = "Display";
@@ -37,7 +39,7 @@ function load_gantt(load_data){
 ];
 
 	gantt.init("gantt_here");
-	console.log(load_data, "load_data");
+	console.log(load_data, "data_loaded");
   
   gantt.parse({"data":load_data, "links":[]});
   
@@ -51,7 +53,7 @@ function make_structure(data, sd, range_duration){
   display_list = [];
   parent_list = [];
 
-  console.log(data);
+  //console.log(data);
 
   data.forEach(booking => {
       let room_no = booking.Room_No.display_value;
@@ -63,7 +65,7 @@ function make_structure(data, sd, range_duration){
       let bof = ssd.toISOString().slice(0,10).replace(/-/g,"-").split("-");
       
       let sbof = `${bof[2]}-${bof[1]}-${bof[0]} 00:00`;
-      console.log(booking.Occupancy_From, booking.Reservation_Number);
+      //console.log(booking.Occupancy_From, booking.Reservation_Number);
       
       display_list.push({id: booking.Reservation_Number, text: `Booking #${booking.Reservation_Number}  (${booking.Guests.display_value})`,
                          start_date: sbof,
@@ -101,7 +103,7 @@ function fetch_data(){
         ed = $("#ed").val(),
         date = new Date();
 
-    console.log(sd == '' || ed == '' || sd == null || ed == null);
+    //console.log(sd == '' || ed == '' || sd == null || ed == null);
 
 
     if (sd == '' || ed == '' || sd == null || ed == null){
@@ -134,13 +136,13 @@ function fetch_data(){
             Room_Roster = {
                 appName : "hms",
                 reportName : "All_Room_Rosters",
-                criteria: `(Occupancy_From >= '${ssd}' && Occupancy_To <= '${sed}')`
+                criteria: `(Occupancy_From >= '${ssd}' || Occupancy_To <= '${sed}')`
             };
 
-            console.log(Room_Roster);
+            //console.log(Room_Roster);
             
             ZOHO.CREATOR.API.getAllRecords(Room_Roster).then(function(response){
-                console.log(response);
+                console.log(response.data, "data_response");
 
                 let __data = make_structure(data = response.data, sd = ssd, range_duration = range_duration)
                 load_gantt(__data);
