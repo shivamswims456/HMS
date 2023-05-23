@@ -386,6 +386,7 @@ function updateBookingChange(){
      */
     console.log("eventAttached");
     gantt.attachEvent("onAfterTaskUpdate", function(id,item){
+        window.update_item = item;
         console.log("updated", );
 
         if(window.gTaskUpdate){
@@ -612,13 +613,15 @@ function update_confirmation(){
         
                         let guest_list = [];
                         let room_zid = gantt.getLightboxSection('Room').getValue();
-                        let updated_parent_id = "";
+                        let updated_parent_id = ""; //startHere
 
                         gantt.getLightboxSection('Room').section.options.forEach((option_obj)=>{
                             if (option_obj.key == room_zid){
                                 updated_parent_id = option_obj.label;
                             }
                         });
+
+                        
                         
         
                         let date_store = JSON.parse(JSON.stringify({item_start_date_copy: window.update_item.start_date,
@@ -641,7 +644,7 @@ function update_confirmation(){
 
                         }
         
-        
+                        
                         let trail_response_data = trail_response.data,
                             Room_Roster_Active = {
                             appName: "hms",
@@ -655,10 +658,12 @@ function update_confirmation(){
                                 Adult:trail_response.Adult,
                                 Class: "Active",
                                 Occupancy_To:__ZOHO_dt(date_store.item_end_date_copy),
-                                Room_No: room_zid,
+                                Room_No:window.lightbox_save?room_zid:trail_response_data.Room_No.ID,
                                 Child:trail_response.Child
                             }}
                         }; //trail copy
+
+                        console.log(trail_response_data);
 
                         let Room_Roster_Trailed = {
                             appName: "hms",
@@ -704,9 +709,17 @@ function update_confirmation(){
             
                                         let gTask = gantt.getTask(window.update_item.id);
                                         gTask.zid = response_added.data.ID;
-                                        gTask.parent = updated_parent_id;
+                                        //console.log(updated_parent_id);
                                         window.gTaskUpdate = true;
-                                        gantt.addTask(gTask);
+                                        console.log(window.lightbox_save, "window.lightbox_save");
+                                        if (window.lightbox_save){
+                                            gTask.parent = updated_parent_id;    
+                                            gantt.addTask(gTask);
+                                            window.lightbox_save = false;
+                                        }
+                                        
+                                        
+                                        
                                         //gantt.moveTask(gTask.id, 1, updated_parent_id);
                                         
             
@@ -772,7 +785,7 @@ function update_light_box_event(){
 
     gantt.attachEvent("onLightboxSave", function(id, task, is_new){
         
-
+        window.lightbox_save = true;
         window.update_item = task;
 
         
@@ -793,6 +806,7 @@ $(() => {
     window.date_magic = {};
     window.cell_color = {};
     window.gTaskUpdate = false;
+    window.lightbox_save = false;
     window.upd_Booking = new bootstrap.Modal(document.getElementById('upd_Booking'), {
         keyboard: false
     })
