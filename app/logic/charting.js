@@ -65,8 +65,42 @@ function load_gantt(load_data) {
      */
 
     gantt.plugins({
-        auto_scheduling: true
+        auto_scheduling: true,
+        tooltip: true 
     });
+
+
+    gantt.templates.tooltip_text = function(start,end,task){
+      
+        return `<div class="flex-column">
+                    <div class="d-flex">
+                        <div class = "d-flex" style="width:40%;">
+                            <strong>Booking Name</strong>
+                        </div>
+                        <div class = "d-flex" style="width:50%;">
+                            <span>${task.text}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class = "d-flex" style="width:40%;">
+                            <strong>Check In</strong>
+                        </div>
+                        <div class = "d-flex" style="width:50%;">
+                            <span>${start.toLocaleString()}</span>
+                        </div>
+                    </div>
+                    <div class="d-flex">
+                        <div class = "d-flex" style="width:40%;">
+                            <strong>Check Out</strong>
+                        </div>
+                        <div class = "d-flex" style="width:50%;">
+                            <span>${end.toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>`;
+
+    };
+
 
     gantt.templates.timeline_cell_class = function(task,date){
 
@@ -175,7 +209,7 @@ function load_gantt(load_data) {
     console.log(load_data);
 
     gantt.parse({ "data": load_data, "links": [] }); //parsing data
-    
+    console.log(window.loaded);
     if (!window.loaded){
         // adding event listners after the chart has rendered as 
         // adding before it causes 1-render triggers
@@ -187,6 +221,8 @@ function load_gantt(load_data) {
     
 
     window.parsed = true;
+    window.terminal = false;
+    
 }
 
 
@@ -280,12 +316,16 @@ function fetch_data() {
 
     if (sd == '' || ed == '' || sd == null || ed == null) {
 
+        console.log("default dates");
+
         sd = new Date(date.getFullYear(), date.getMonth(), 2);
         ed = new Date(date.getFullYear(), date.getMonth() + 1, 2),
             range_duration = days_btw(sd, ed);
 
 
     } else {
+
+        console.log("from dates");
 
         sd = new Date(sd);
         ed = new Date(ed);
@@ -305,7 +345,7 @@ function fetch_data() {
             let Room_Roster = {
                 appName: "hms",
                 reportName: "All_Room_Rosters",
-                criteria: `((Occupancy_From >= '${ssd}' || Occupancy_To <= '${sed}') && (Class == "Active"))`
+                criteria: `((Occupancy_From >= "${ssd}" && Occupancy_To <= "${sed}") && (Class == "Active"))`
             },
 
             Room_Inventory = {
@@ -314,11 +354,11 @@ function fetch_data() {
                 criteria: `(ID != 0)`
             };
 
-            console.log(Room_Roster);
+            console.log(Room_Roster, "Room_Roster");
 
             ZOHO.CREATOR.API.getAllRecords(Room_Roster).then(function (response_roster) {
                 //gettings all bookings
-
+                console.log(response_roster);
                 ZOHO.CREATOR.API.getAllRecords(Room_Inventory).then(function(response_inv){
                     //gettings all rooms
 
@@ -386,14 +426,23 @@ function updateBookingChange(){
      */
     console.log("eventAttached");
     gantt.attachEvent("onAfterTaskUpdate", function(id,item){
+        
+        console.log(window.terminal, "window.terminal")
         window.update_item = item;
-        console.log("updated", );
+        
+        if(!window.terminal){
 
-        if(window.gTaskUpdate){
-            window.gTaskUpdate = false;
-        } else {
-            window.upd_Booking.show();
+            if(window.gTaskUpdate){
+                window.gTaskUpdate = false;
+                
+            } else {
+                window.upd_Booking.show();
+                
+            }
+        
         }
+        console.log(window.gTaskUpdate, "UBC window.gTaskUpdate");
+    
 
 
         
@@ -694,7 +743,8 @@ function update_confirmation(){
                                     id:genral_update_id,
                                     data:{data:{
                                         Room_Check_Out:Room_Roster_Active.data.data.Occupancy_To,
-                                        Room_Check_In:Room_Roster_Active.data.data.Occupancy_From
+                                        Room_Check_In:Room_Roster_Active.data.data.Occupancy_From,
+                                        Room_No:window.lightbox_save?room_zid:trail_response_data.Room_No.ID
                                         }}
         
                                 };
@@ -710,7 +760,8 @@ function update_confirmation(){
                                         let gTask = gantt.getTask(window.update_item.id);
                                         gTask.zid = response_added.data.ID;
                                         //console.log(updated_parent_id);
-                                        window.gTaskUpdate = true;
+                                        window.gTaskUpdate = false;
+                                        console.log(window.gTaskUpdate, "window.gTaskUpdate");
                                         console.log(window.lightbox_save, "window.lightbox_save");
                                         if (window.lightbox_save){
                                             gTask.parent = updated_parent_id;    
@@ -803,6 +854,7 @@ $(() => {
      */
 
     window.loaded = false;
+    window.terminal = false;
     window.date_magic = {};
     window.cell_color = {};
     window.gTaskUpdate = false;
@@ -820,14 +872,18 @@ $(() => {
 
     
 
-    
+    //var myWindow = window.open("https://www.w3schools.com", "_parent");
 
 
     $("#updateChart").on("click", () => {
+        
+        window.terminal = true;
+        console.log(window.terminal);
         window.date_magic = {}; //to reset on dataUpdate
         window.cell_colors = {};
         gantt.clearAll();
         fetch_data();
+       
     });
 
 })
