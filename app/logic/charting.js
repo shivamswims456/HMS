@@ -735,7 +735,11 @@ function update_confirmation(){
                             ZOHO.CREATOR.API.getAllRecords(general_reservation_record).then(function(response_general){
         
                                 let genral_update_id = response_general.data[0].ID;
-                                console.log(response_general);
+                                console.log({data:{data:{
+                                    Room_Check_Out:Room_Roster_Active.data.data.Occupancy_To,
+                                    Room_Check_In:Room_Roster_Active.data.data.Occupancy_From,
+                                    Room_No:window.lightbox_save?room_zid:trail_response_data.Room_No.ID
+                                    }}}, "upadte_data");
         
                                 let general_update_data = {
                                     appName: "hms",
@@ -752,7 +756,8 @@ function update_confirmation(){
         
         
                                 ZOHO.CREATOR.API.updateRecord(general_update_data).then(function(response_gen_upd){
-        
+                                    
+                                    console.log(response_gen_upd, "response_gen_upd");
                                     
                                     ZOHO.CREATOR.API.addRecord(Room_Roster_Active).then(function(response_added){
                                         //Active Request

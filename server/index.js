@@ -44,16 +44,26 @@ expressApp.use('/', function (req, res, next) {
 });
 
 expressApp.get('/plugin-manifest.json', function (req, res) {
-  res.sendfile('plugin-manifest.json');
+  res.sendFile('plugin-manifest.json');
 });
+
+
 
 expressApp.use('/app', express.static('app'));
 expressApp.use('/app', serveIndex('app'));
 
+expressApp.get('/man', function (req, res) {
+  res.send("shows only First Line")
+  //res.redirect('/app');
+});
+
 
 expressApp.get('/', function (req, res) {
+  //res.write("man");
   res.redirect('/app');
 });
+
+
 
 var options = {
   key: fs.readFileSync('./key.pem'),
